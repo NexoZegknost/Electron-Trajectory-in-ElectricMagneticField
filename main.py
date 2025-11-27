@@ -11,6 +11,7 @@ from engine import run_cpp_simulation, B, lib, q, m
 from interface import *
 from visualization.plot_setup import *
 from visualization.plot_vectors import *
+from visualization.plot_DElectrodes import plot_dees
 from visualization.animation_core import *
 
 
@@ -53,6 +54,13 @@ def run_simulation_from_gui(entries, tmax_entry, root):
     # 4. Thiết lập Plot
     title = f"Quỹ đạo của electron trong máy gia tốc hạt Cyclotron"
     fig, ax = setup_plot(x, y, z, E_static, B, title)
+    # --- THAM SỐ CỰC D (CYCLOTRON) ---
+    # Lấy bán kính tối đa từ quỹ đạo để tự động điều chỉnh kích thước D
+    R_max_sim = np.max(np.abs(np.concatenate((x, y))))
+    # Đảm bảo R_max của Dee lớn hơn quỹ đạo tối đa
+    R_DEE = R_max_sim * 1.1 if R_max_sim > 1e-12 else 0.1
+    H_DEE = R_DEE / 5.0  # Chiều cao (độ dày) của Dee
+    GAP_DEE = R_DEE / 10.0  # Khe hở giữa hai Dee
 
     # 5. Vẽ Vector
     plot_ElectricField_vector(ax, x, y, z, E_static)
@@ -60,6 +68,7 @@ def run_simulation_from_gui(entries, tmax_entry, root):
     plot_Velocity_vector(ax, x, y, z, v0)
 
     # 6. Khởi tạo đối tượng Animation
+    plot_dees(ax, R_DEE, H_DEE, GAP_DEE, color="orange", alpha=0.15)  # Vẽ các cực D
     line_animated, point, line_final = create_animation_objects(
         ax, x_anim, y_anim, z_anim
     )

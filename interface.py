@@ -8,9 +8,9 @@ import numpy as np
 def create_input_fields(root):
     """Tạo các trường nhập liệu và nút bấm trong cửa sổ Tkinter."""
     fields = [
-        ("Vị trí Ban đầu x0 (m):", "10", "r0_x"),
-        ("Vị trí Ban đầu y0 (m):", "10", "r0_y"),
-        ("Vị trí Ban đầu z0 (m):", "6", "r0_z"),
+        ("Vị trí Ban đầu x0 (m):", "0", "r0_x"),
+        ("Vị trí Ban đầu y0 (m):", "0", "r0_y"),
+        ("Vị trí Ban đầu z0 (m):", "0", "r0_z"),
         ("Vận tốc Ban đầu vx (m/s):", "1e6", "v0_x"),
         ("Vận tốc Ban đầu vy (m/s):", "1e6", "v0_y"),
         ("Vận tốc Ban đầu vz (m/s):", "1e6", "v0_z"),
