@@ -16,5 +16,5 @@ def draw_final_state(ax, line_animated, line_final, point, x_anim, y_anim, z_ani
     point.set_data_3d([x_anim[-1]], [y_anim[-1]], [z_anim[-1]])
 
     # Cập nhật legend
-    line_final.set_label("Quỹ đạo Hoàn chỉnh")
+    line_final.set_label("Quỹ đạo hoàn chỉnh")
     ax.legend()

@@ -7,11 +7,11 @@ from tkinter import messagebox
 import os
 
 # Import các module đã phân chia
-from physics_engine import run_cpp_simulation, B, lib
-from gui_interface import create_input_fields, get_input_values
-from visualization.plot_setup import setup_plot
-from visualization.plot_vectors import plot_field_vectors
-from visualization.animation_core import run_animation, create_animation_objects
+from engine import run_cpp_simulation, B, lib, q, m
+from interface import *
+from visualization.plot_setup import *
+from visualization.plot_vectors import *
+from visualization.animation_core import *
 
 
 # --- Hàm Chính Chạy Mô phỏng ---
@@ -36,18 +36,28 @@ def run_simulation_from_gui(entries, tmax_entry, root):
 
     # 3. Chuẩn bị dữ liệu Animation
     num_total_points = len(x)
-    num_frames = 400
+    num_frames = 1000
     indices = np.linspace(0, num_total_points - 1, num_frames, dtype=int)
     x_anim = x[indices]
     y_anim = y[indices]
     z_anim = z[indices]
 
+    vx_full = np.gradient(x, axis=0)
+    vy_full = np.gradient(y, axis=0)
+    vz_full = np.gradient(z, axis=0)
+
+    vx_anim = vx_full[indices]
+    vy_anim = vy_full[indices]
+    vz_anim = vz_full[indices]
+
     # 4. Thiết lập Plot
-    title = f"Animation Chuyển động Electron (E={E_static} V/m, B={B} T)"
+    title = f"Quỹ đạo của electron trong máy gia tốc hạt Cyclotron"
     fig, ax = setup_plot(x, y, z, E_static, B, title)
 
     # 5. Vẽ Vector
-    plot_field_vectors(ax, x, y, z, E_static, B)
+    plot_ElectricField_vector(ax, x, y, z, E_static)
+    plot_MagneticField_vectors(ax, x, y, z, B)
+    plot_Velocity_vector(ax, x, y, z, v0)
 
     # 6. Khởi tạo đối tượng Animation
     line_animated, point, line_final = create_animation_objects(
@@ -58,11 +68,31 @@ def run_simulation_from_gui(entries, tmax_entry, root):
     ax.legend()
 
     # 7. Chạy Animation
-    run_animation(
-        fig, ax, line_animated, point, line_final, x_anim, y_anim, z_anim, num_frames
+    ani = run_animation(
+        fig,
+        ax,
+        line_animated,
+        point,
+        line_final,
+        x_anim,
+        y_anim,
+        z_anim,
+        vx_anim,
+        vy_anim,
+        vz_anim,  # <-- Dữ liệu vận tốc
+        E_static,
+        B,
+        q,
+        m,  # <-- Hằng số vật lý
+        num_frames,
     )
 
     print(f"\nAnimation đang chạy với {num_frames} frames.")
+
+    # >>> KHẮC PHỤC CẢNH BÁO: Đảm bảo đối tượng ani được giữ lại <<<
+    # Điều này ngăn Matplotlib tự động dọn dẹp đối tượng animation
+    ani._stop = False  # Khôi phục trạng thái cũ (nếu cần), hoặc
+    ani.frame_seq = ani.new_frame_seq()  # <-- Sửa lỗi chính tả
 
     plt.show()
 
