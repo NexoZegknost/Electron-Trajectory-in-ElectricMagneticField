@@ -25,6 +25,6 @@ It's recommend to create a virtual env to avoid library conflit
 Install with pip
 
 ```bash
-pip install scipy numpy sympy matplotlib
+pip install scipy numpy matplotlib
 ```
     
